@@ -97,9 +97,7 @@ EvoWalk-/
 
 ## 👩‍💻 Author
 
-Made by **[Tanishka-ship-it](https://github.com/Tanishka-ship-it)**
-
-<!-- Add teammates here if this was a group project. -->
+Made in collaboration with Tanishka, Mansha, Alankrit and Vinamra.
 
 ---
 
