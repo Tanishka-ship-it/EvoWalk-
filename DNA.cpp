@@ -13,6 +13,26 @@ const double mutation_rate = 0.05;
 string sample_set = "0123456789 QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm.,/-:";
 int length;
 
+void getinp(char final[]) {
+    string input;
+    cout << "Enter a " << max_length << " length target string (digits + spaces)[c++ varient]: ";
+    if (!getline(cin, input)) {
+        cout << "Input error." << endl;
+        return;
+    }
+    // no trailing \n to strip with getline, but keeping behavior consistent
+    int input_length = static_cast<int>(input.length());
+
+    int copy_length = input_length;
+    if (copy_length > max_length)
+        copy_length = max_length;
+    // copy first max_length chars into final
+    for (int i = 0; i < copy_length; i++) {
+        final[i] = input[i];
+    }
+    final[copy_length] = '\0'; // null terminate
+    length = copy_length;
+}
 void generate_random(char placeholder[]) {
     for (int i = 0; i < length; i++) {
         placeholder[i] = sample_set[rand() % sl];
