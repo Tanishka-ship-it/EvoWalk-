@@ -1,3 +1,11 @@
+#include <iostream>
+#include <cstring>
+#include <cstdlib>
+#include <ctime>
+#include <string>
+
+using namespace std;
+
 void share_calc(int fitness_tally[], int pop_size, int share[], int sizeofsharecalc) {
     int total_fitness = 0;
     for (int i = 0; i < pop_size; i++) {
