@@ -20,25 +20,24 @@ void getinp(char final[]) {
         cout << "Input error." << endl;
         return;
     }
-    // no trailing \n to strip with getline, but keeping behavior consistent
+
     int input_length = static_cast<int>(input.length());
 
     int copy_length = input_length;
     if (copy_length > max_length)
         copy_length = max_length;
-    // copy first max_length chars into final
+  
     for (int i = 0; i < copy_length; i++) {
         final[i] = input[i];
     }
-    final[copy_length] = '\0'; // null terminate
+    final[copy_length] = '\0'; 
     length = copy_length;
 }
 void generate_random(char placeholder[]) {
     for (int i = 0; i < length; i++) {
         placeholder[i] = sample_set[rand() % sl];
     }
-    placeholder[length] = '\0'; // to end the array early if small
-}
+    placeholder[length] = '\0';
 int fitness_score(char final[], char seed[]) {
     int a = 0;
     for (int i = 0; i < length; i++) {
@@ -48,7 +47,8 @@ int fitness_score(char final[], char seed[]) {
     }
     return a;
 }
-void delay_ms(int ms) { // lowk i jus googled how to add delay
+void delay_ms(int ms) 
+{ 
     clock_t start = clock();
     double target_ticks = (ms / 1000.0) * CLOCKS_PER_SEC;
     while ((double)(clock() - start) < target_ticks) {
