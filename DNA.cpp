@@ -5,6 +5,35 @@
 #include <string>
 
 using namespace std;
+const int max_length = 67;
+const int sl = 68; 
+const int population_size = 150; 
+const int chill = 30;
+const double mutation_rate = 0.05;
+string sample_set = "0123456789 QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm.,/-:";
+int length;
+
+void generate_random(char placeholder[]) {
+    for (int i = 0; i < length; i++) {
+        placeholder[i] = sample_set[rand() % sl];
+    }
+    placeholder[length] = '\0'; // to end the array early if small
+}
+int fitness_score(char final[], char seed[]) {
+    int a = 0;
+    for (int i = 0; i < length; i++) {
+        if (final[i] == seed[i]) {
+            a++;
+        }
+    }
+    return a;
+}
+void delay_ms(int ms) { // lowk i jus googled how to add delay
+    clock_t start = clock();
+    double target_ticks = (ms / 1000.0) * CLOCKS_PER_SEC;
+    while ((double)(clock() - start) < target_ticks) {
+    }
+}
 
 void share_calc(int fitness_tally[], int pop_size, int share[], int sizeofsharecalc) {
     int total_fitness = 0;
