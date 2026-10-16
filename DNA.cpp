@@ -72,3 +72,14 @@ int find_best(int fitness_tally[], int pop_size) {
     }
     return best;
 }
+
+int select_parent(int share[], int pop_size) {
+    return share[rand() % pop_size];
+}
+
+
+int main() {
+    srand((unsigned int)time(NULL)); 
+    char final[sl], seed[sl], p1[sl], p2[sl], p3[sl], p4[sl]; 
+    char b1[sl], b2[sl]; 
+    getinp(final);
