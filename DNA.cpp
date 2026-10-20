@@ -97,6 +97,14 @@ int select_parent(int share[], int pop_size) {
     return share[rand() % pop_size];
 }
 
+void mutate(char individual[]) {
+    for (int i = 0; i < length; i++) {
+        double roll = (double)rand() / RAND_MAX;
+        if (roll < mutation_rate) {
+            individual[i] = sample_set[rand() % sl];
+        }
+    }
+}
 
 int main() {
     srand((unsigned int)time(NULL)); 
