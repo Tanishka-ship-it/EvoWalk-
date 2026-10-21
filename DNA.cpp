@@ -124,3 +124,5 @@ int main() {
     char final[sl], seed[sl], p1[sl], p2[sl], p3[sl], p4[sl]; 
     char b1[sl], b2[sl]; 
     getinp(final);
+    char population[population_size][sl]; // 2d array containing all the seeds.
+    int fitness_tally[population_size];
