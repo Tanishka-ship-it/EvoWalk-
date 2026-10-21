@@ -97,6 +97,19 @@ int select_parent(int share[], int pop_size) {
     return share[rand() % pop_size];
 }
 
+void crossover_single_point(char parentA[], char parentB[], char child[]) {
+    int cut_point = rand() % length;
+    for (int i = 0; i < length; i++) {
+        if (i < cut_point) {
+            child[i] = parentA[i];
+        }
+        else {
+            child[i] = parentB[i];
+        }
+}
+
+child[length] = '\0';
+}
 void mutate(char individual[]) {
     for (int i = 0; i < length; i++) {
         double roll = (double)rand() / RAND_MAX;
