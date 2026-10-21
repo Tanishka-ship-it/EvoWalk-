@@ -121,8 +121,43 @@ void mutate(char individual[]) {
 
 int main() {
     srand((unsigned int)time(NULL)); 
+
     char final[sl], seed[sl], p1[sl], p2[sl], p3[sl], p4[sl]; 
     char b1[sl], b2[sl]; 
+
     getinp(final);
+
     char population[population_size][sl]; // 2d array containing all the seeds.
     int fitness_tally[population_size];
+    for (int i = 0; i < population_size; i++) {
+    generate_random(population[i]);
+    fitness_tally[i] = fitness_score(final, population[i]);
+    }
+    int share[population_size];
+    int generation = 0;
+
+    while (true) {
+        int best = find_best(fitness_tally, population_size);
+        printf("Gen %-3d | Input: %-12s | Best: %-12s | Fitness: %2d/%d\n", generation, final, population[best], fitness_tally[best], length);
+        delay_ms(chill);
+        if (fitness_tally[best] == length) {
+            cout << "\nSOLVED in " << generation << " generations!" << endl;
+        break;
+        }
+        share_calc(fitness_tally, population_size, share, population_size);
+        char new_population[population_size][max_length + 1];
+        for (int i = 0; i < population_size; i++) {
+            int a = select_parent(share, population_size);
+            int b = select_parent(share, population_size);
+            crossover_single_point(population[a], population[b],
+            new_population[i]);
+            mutate(new_population[i]);
+        }
+        for (int i = 0; i < population_size; i++) {
+            strcpy(population[i], new_population[i]);
+            fitness_tally[i] = fitness_score(population[i], final);
+        }
+        generation++;
+    }
+    return 0;
+}
