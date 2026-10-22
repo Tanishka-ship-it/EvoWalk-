@@ -37,6 +37,7 @@ void generate_random(char placeholder[]) {
     for (int i = 0; i < length; i++) {
         placeholder[i] = sample_set[rand() % sl];
     }
+}
     placeholder[length] = '\0';
 int fitness_score(char final[], char seed[]) {
     int a = 0;
