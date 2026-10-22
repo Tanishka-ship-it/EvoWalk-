@@ -38,8 +38,9 @@ void generate_random(char placeholder[]) {
     for (int i = 0; i < length; i++) {
         placeholder[i] = sample_set[rand() % sl];
     }
-}
     placeholder[length] = '\0';
+}
+
 int fitness_score(char final[], char seed[]) {
     int a = 0;
     for (int i = 0; i < length; i++) {
@@ -49,12 +50,22 @@ int fitness_score(char final[], char seed[]) {
     }
     return a;
 }
-void delay_ms(int ms) 
-{ 
+
+void delay_ms(int ms) { 
     clock_t start = clock();
     double target_ticks = (ms / 1000.0) * CLOCKS_PER_SEC;
     while ((double)(clock() - start) < target_ticks) {
     }
+}
+
+int find_best(int fitness_tally[], int pop_size) {
+    int best = 0;
+    for (int i = 1; i < pop_size; i++) {
+        if (fitness_tally[i] > fitness_tally[best]) {
+            best = i;
+        }
+    }
+    return best;
 }
 
 void share_calc(int fitness_tally[], int pop_size, int share[], int sizeofsharecalc) {
