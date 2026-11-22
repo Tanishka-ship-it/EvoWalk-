@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EvoWalk — Creature Lab (C++ Powered)</title>
+<meta name="description" content="Build a creature from joints, bones, and muscles. Powered directly by the C/C++ physics & genetic algorithm engine.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2316181b'/%3E%3Cpath d='M8 23 24 9' stroke='%23e8e5de' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='8' cy='23' r='4' fill='%23e6483d'/%3E%3Ccircle cx='24' cy='9' r='4' fill='%23e8e5de'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app" id="app">
+
+  <section class="screen screen-build" id="buildScreen">
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 30 30" fill="none">
+            <path d="M6 24 24 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            <circle cx="6" cy="24" r="3.6" fill="var(--red)"/>
+            <circle cx="24" cy="6" r="3.6" fill="var(--paper)"/>
+          </svg>
+        </span>
+        <span class="brand-type">
+          <strong>EVOWALK</strong>
+          <small>C++ CREATURE LAB</small>
+        </span>
+      </div>
+
+      <nav class="task-tabs" id="taskTabs" aria-label="Choose a task">
+        <button type="button" class="task-tab is-active" data-task="run"><span>01</span>RUN</button>
+        <button type="button" class="task-tab" data-task="jump"><span>02</span>JUMP</button>
+        <button type="button" class="task-tab" data-task="climb"><span>03</span>CLIMB</button>
+        <button type="button" class="task-tab" data-task="custom"><span>04</span>CUSTOM</button>
+      </nav>
+
+      <div class="topbar-actions">
+        <span class="build-stamp">C++ ENGINE</span>
+        <button type="button" class="icon-btn" id="cppBtn" aria-label="C++ & Data Structures" title="C/C++ Core & Data Structures">
+          <span style="font-size:10.5px;font-weight:700;letter-spacing:0.5px">C++</span>
+        </button>
+        <button type="button" class="icon-btn help-btn" id="helpBtn" aria-label="How to play">
+          <span aria-hidden="true">?</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="build-body">
+      <aside class="toolbar" aria-label="Build tools">
+        <button type="button" class="tool is-active" data-tool="select" aria-label="Select tool" aria-pressed="true" title="Select (V)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
+            <path d="M5 3.5 18.5 12l-6.2 1.4L9.9 20 5 3.5Z"/>
+          </svg>
+          <span class="tool-key">V</span>
+        </button>
+        <button type="button" class="tool" data-tool="joint" aria-label="Add joint" aria-pressed="false" title="Joint (J)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+            <circle cx="12" cy="12" r="4.4"/>
+            <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/>
+            <path d="M12 3.2v3M12 17.8v3M3.2 12h3M17.8 12h3" stroke-linecap="round"/>
+          </svg>
+          <span class="tool-key">J</span>
+        </button>
+        <button type="button" class="tool" data-tool="bone" aria-label="Add bone" aria-pressed="false" title="Bone (B)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+            <path d="M6.5 17.5 17.5 6.5" stroke-width="3.2"/>
+            <circle cx="6.5" cy="17.5" r="2.6" fill="var(--bg-deep)"/>
+            <circle cx="17.5" cy="6.5" r="2.6" fill="var(--bg-deep)"/>
+          </svg>
+          <span class="tool-key">B</span>
+        </button>
+        <button type="button" class="tool" data-tool="muscle" aria-label="Add muscle" aria-pressed="false" title="Muscle (M)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+            <path d="M4.5 17.5c3.3 0 2.5-5.5 5.5-5.5s2.3 5.5 5.5 5.5 3.2-2.6 4-6.5"/>
+            <circle cx="4.5" cy="17.5" r="1.6" fill="currentColor" stroke="none"/>
+            <circle cx="19.5" cy="11" r="1.6" fill="currentColor" stroke="none"/>
+          </svg>
+          <span class="tool-key">M</span>
+        </button>
+        <button type="button" class="tool" data-tool="erase" aria-label="Erase" aria-pressed="false" title="Erase (E)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m4.5 15.5 8.6-10.8 6.4 4.8-8 10.5H7.5l-3-4.5Z"/>
+            <path d="M10.2 20h9.3M8.5 11l6.2 4.7"/>
+          </svg>
+          <span class="tool-key">E</span>
+        </button>
+        <div class="toolbar-sep" aria-hidden="true"></div>
+        <button type="button" class="tool tool-undo" id="undoBtn" aria-label="Undo" title="Undo (Ctrl+Z)" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8.5 7.5 4 12l4.5 4.5"/>
+            <path d="M4.2 12h8.6a5.7 5.7 0 0 1 0 11.4H10"/>
+          </svg>
+          <span class="tool-key">Z</span>
+        </button>
+      </aside>
+
+      <main class="editor" id="editor">
+        <canvas id="buildCanvas" aria-label="Creature editor canvas"></canvas>
+
+        <div class="editor-top">
+          <div class="editor-title">
+            <span class="eyebrow">BODY EDITOR</span>
+            <h1 id="creatureName">RUNNER</h1>
+          </div>
+          <div class="editor-stats" id="editorStats" aria-live="polite">
+            <span><b id="hudJoints">8</b> JOINTS</span>
+            <span><b id="hudBones">7</b> BONES</span>
+            <span><b id="hudMuscles">4</b> MUSCLES</span>
+          </div>
+        </div>
+
+        <div class="editor-tool-hint" id="editorToolHint">
+          <span class="hint-key">V</span>
+          <span class="hint-copy">Drag a joint to reshape. Click a part to inspect it.</span>
+        </div>
+
+        <div class="editor-status">
+          <span class="status-light" aria-hidden="true"></span>
+          <span id="statusText">READY TO BUILD</span>
+          <span class="status-right">
+            <span id="coordText">X 000 &nbsp; Y 000</span>
+            <span class="status-sep">/</span>
+            <span><kbd>DEL</kbd> DELETE</span>
+            <span class="status-sep">/</span>
+            <span><kbd>CTRL</kbd> <kbd>Z</kbd> UNDO</span>
+          </span>
+        </div>
+      </main>
+
+      <aside class="inspector" aria-label="Creature settings">
+        <section class="inspector-section">
+          <div class="section-head">
+            <span class="eyebrow">TASK</span>
+            <span class="section-note" id="taskPar">PAR 620</span>
+          </div>
+          <div class="task-list" id="taskList">
+            <button type="button" class="task-card is-active" data-task="run">
+              <span class="task-index">01</span>
+              <span class="task-copy">
+                <strong>RUN</strong>
+                <small>Move as far right as possible.</small>
+              </span>
+              <span class="task-par"><b>620</b><small>PAR</small><em class="task-best">C++</em></span>
+            </button>
+            <button type="button" class="task-card" data-task="jump">
+              <span class="task-index">02</span>
+              <span class="task-copy">
+                <strong>JUMP</strong>
+                <small>Launch the body as high as possible.</small>
+              </span>
+              <span class="task-par"><b>170</b><small>PAR</small><em class="task-best">C++</em></span>
+            </button>
+            <button type="button" class="task-card" data-task="climb">
+              <span class="task-index">03</span>
+              <span class="task-copy">
+                <strong>CLIMB</strong>
+                <small>Scale the staircase to the right.</small>
+              </span>
+              <span class="task-par"><b>680</b><small>PAR</small><em class="task-best">C++</em></span>
+            </button>
+            <button type="button" class="task-card" data-task="custom">
+              <span class="task-index">04</span>
+              <span class="task-copy">
+                <strong>CUSTOM</strong>
+                <small>Reach movable target flag.</small>
+              </span>
+              <span class="task-par"><b>500</b><small>PAR</small><em class="task-best">C++</em></span>
+            </button>
+          </div>
+        </section>
+
+        <section class="inspector-section">
+          <div class="section-head">
+            <span class="eyebrow">BODY</span>
+            <span class="section-note" id="bodyMass">MASS 8.2</span>
+          </div>
+          <dl class="stat-grid">
+            <div><dt>JOINTS</dt><dd id="jointCount">8</dd></div>
+            <div><dt>BONES</dt><dd id="boneCount">7</dd></div>
+            <div><dt>MUSCLES</dt><dd id="muscleCount">4</dd></div>
+            <div><dt>MASS</dt><dd id="massCount">8.2</dd></div>
+          </dl>
+          <div class="preset-row" id="presetRow">
+            <button type="button" class="preset-btn is-active" data-preset="runner">RUNNER</button>
+            <button type="button" class="preset-btn" data-preset="hopper">HOPPER</button>
+            <button type="button" class="preset-btn preset-reset" id="resetBody">RESET</button>
+          </div>
+        </section>
+
+        <section class="inspector-section inspector-selection">
+          <div class="section-head">
+            <span class="eyebrow">SELECTION</span>
+            <span class="section-note" id="selectionHint">CLICK A PART</span>
+          </div>
+          <div id="selectionPanel">
+            <p class="selection-empty">Drag a joint to reshape the body, or click a bone or muscle to tune it.</p>
+          </div>
+        </section>
+
+        <div class="inspector-cta">
+          <div class="cta-row-time">
+            <span class="time-label">GEN DURATION</span>
+            <div class="time-input-wrap">
+              <input type="number" id="buildGenTimeInput" min="1" max="60" step="0.5" value="7.0" aria-label="Generation duration in seconds" style="background-color:#121418 !important; color:#f2efe9 !important; -webkit-text-fill-color:#f2efe9 !important; border:1px solid rgba(232,229,222,0.3) !important;">
+              <span class="time-unit">SEC</span>
+            </div>
+          </div>
+          <div class="cta-row-time">
+            <span class="time-label">GHOST COUNT</span>
+            <div class="time-input-wrap">
+              <input type="number" id="buildGhostInput" min="2" max="100" step="1" value="24" aria-label="Number of ghosts per generation" style="background-color:#121418 !important; color:#f2efe9 !important; -webkit-text-fill-color:#f2efe9 !important; border:1px solid rgba(232,229,222,0.3) !important;">
+              <span class="time-unit">GHOSTS</span>
+            </div>
+          </div>
+          <div class="cta-row-time">
+            <span class="time-label">MUTATION RATE</span>
+            <div class="time-input-wrap">
+              <input type="number" id="buildMutationInput" min="0" max="100" step="1" value="18" aria-label="Mutation rate percentage" style="background-color:#121418 !important; color:#f2efe9 !important; -webkit-text-fill-color:#f2efe9 !important; border:1px solid rgba(232,229,222,0.3) !important;">
+              <span class="time-unit">%</span>
+            </div>
+          </div>
+          <div class="cta-meta">
+            <span id="evolveMeta">24 GHOSTS · 7.0 S / GEN</span>
+            <span class="cta-ready" id="evolveReady">READY</span>
+          </div>
+          <button type="button" class="btn-evolve" id="evolveBtn">
+            <span>EVOLVE IN C++</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 12h15M13 6l6 6-6 6"/>
+            </svg>
+          </button>
+          <p class="cta-hint" id="evolveHint">Physics and evolution run natively in your C++ executable.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="screen screen-evolve is-hidden" id="evolveScreen">
+    <header class="evolve-top">
+      <div class="brand brand-small">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 30 30" fill="none">
+            <path d="M6 24 24 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            <circle cx="6" cy="24" r="3.6" fill="var(--red)"/>
+            <circle cx="24" cy="6" r="3.6" fill="var(--paper)"/>
+          </svg>
+        </span>
+        <span class="brand-type">
+          <strong>EVOWALK</strong>
+          <small>C++ LIVE ENGINE</small>
+        </span>
+      </div>
+
+      <div class="evolve-gen">
+        <span class="eyebrow">GENERATION</span>
+        <strong id="genValue">01</strong>
+      </div>
+
+      <div class="evolve-progress">
+        <div class="progress-meta">
+          <span class="progress-task"><i class="live-dot" aria-hidden="true"></i><b id="taskLabel">RUN</b><em id="bodyLabel">RUNNER</em></span>
+          <span id="timerValue">0.0 / 7.0 S</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+
+      <div class="evolve-controls">
+        <div class="duration-control" id="durationControl" title="Generation duration (seconds)">
+          <span class="ctrl-label">TIME</span>
+          <input type="number" id="genTimeInput" min="1" max="60" step="0.5" value="7.0" aria-label="Generation duration in seconds" style="background-color:#121418 !important; color:#f2efe9 !important; -webkit-text-fill-color:#f2efe9 !important; border:1px solid rgba(232,229,222,0.3) !important;">
+          <span class="ctrl-unit">S</span>
+        </div>
+        <div class="duration-control" id="ghostControl" title="Number of ghosts (2 - 100)">
+          <span class="ctrl-label">GHOSTS</span>
+          <input type="number" id="ghostInput" min="2" max="100" step="1" value="24" aria-label="Number of ghosts" style="background-color:#121418 !important; color:#f2efe9 !important; -webkit-text-fill-color:#f2efe9 !important; border:1px solid rgba(232,229,222,0.3) !important;">
+        </div>
+        <div class="duration-control" id="mutationControl" title="Mutation rate (0% - 100%)">
+          <span class="ctrl-label">MUT</span>
+          <input type="number" id="mutationInput" min="0" max="100" step="1" value="18" aria-label="Mutation rate percentage" style="background-color:#121418 !important; color:#f2efe9 !important; -webkit-text-fill-color:#f2efe9 !important; border:1px solid rgba(232,229,222,0.3) !important;">
+          <span class="ctrl-unit">%</span>
+        </div>
+        <div class="duration-control speed-slider-wrap" id="speedControl" title="Simulation speed multiplier (0.5× to 64×)">
+          <span class="ctrl-label">SPEED</span>
+          <input type="range" id="speedSlider" min="0.5" max="64" step="0.5" value="1" aria-label="Simulation speed multiplier">
+          <span class="ctrl-val" id="speedValue" title="Double-click to reset to 1×">1×</span>
+        </div>
+        <div class="duration-control warp-control" id="warpControl" title="Fast-forward generations at native C++ speed">
+          <span class="ctrl-label">WARP</span>
+          <input type="number" id="warpGensInput" min="5" max="500" step="5" value="50" aria-label="Generations to warp" style="background-color:#121418 !important; color:#f2efe9 !important; -webkit-text-fill-color:#f2efe9 !important; border:1px solid rgba(232,229,222,0.3) !important;">
+          <span class="ctrl-unit">G</span>
+          <button type="button" class="btn-warp" id="warpBtn" title="Simulate generations in C++">⚡ WARP</button>
+        </div>
+        <button type="button" class="btn-ghost" id="pauseBtn"><span class="pause-glyph" aria-hidden="true"></span>PAUSE</button>
+        <button type="button" class="btn-ghost" id="exitBtn">EDIT</button>
+      </div>
+    </header>
+
+    <div class="evolve-stage" id="evolveStage">
+      <canvas id="evolveCanvas" aria-label="Evolving creature population"></canvas>
+
+      <aside class="evolve-side" aria-label="Evolution status">
+        <div class="score-card">
+          <div class="section-head">
+            <span class="eyebrow">BEST IN GENERATION</span>
+            <span class="section-note" id="scorePhase">C++ LIVE</span>
+          </div>
+          <strong id="bestValue">0</strong>
+          <div class="score-sub">
+            <span id="bestDelta">FIRST RUN</span>
+            <span id="bestPar">/ 620 PAR</span>
+          </div>
+          <div class="par-track"><div id="bestParFill"></div></div>
+        </div>
+
+        <div class="side-section population-section">
+          <div class="section-head">
+            <span class="eyebrow">POPULATION</span>
+            <span class="section-note" id="aliveValue">24 RUNNING</span>
+          </div>
+          <ol class="leaderboard" id="leaderboard"></ol>
+        </div>
+
+        <div class="side-section record-section">
+          <div class="section-head">
+            <span class="eyebrow">RECORD</span>
+            <span class="section-note" id="recordGenValue">—</span>
+          </div>
+          <div class="record-row"><span>BEST EVER</span><strong id="recordValue">0</strong></div>
+          <div class="record-row"><span>BODY</span><strong id="recordBody">RUNNER</strong></div>
+        </div>
+      </aside>
+
+      <div class="stage-caption">
+        <span class="eyebrow">C++ LIVE POPULATION</span>
+        <p>Every joint coordinate is computed in C++ (Verlet physics) and drawn on this canvas.</p>
+      </div>
+
+      <div class="pause-banner" id="pauseBanner" aria-hidden="true">PAUSED</div>
+
+      <div class="warp-banner" id="warpBanner" aria-hidden="true">
+        <div class="warp-banner-content">
+          <div class="warp-spinner" aria-hidden="true"></div>
+          <div class="warp-meta">
+            <strong id="warpTitle">WARPING IN C++...</strong>
+            <span id="warpStatus">RUNNING NATIVE EVOLUTION...</span>
+            <div class="warp-track"><div class="warp-bar" id="warpBar" style="width:0%"></div></div>
+          </div>
+          <button type="button" class="btn-warp-stop" id="warpStopBtn">STOP</button>
+        </div>
+      </div>
+
+      <div class="champion-card" id="championCard" aria-live="polite">
+        <div class="champion-kicker" id="championKicker">GENERATION COMPLETE</div>
+        <div class="champion-main">
+          <strong id="championValue">0</strong>
+          <span id="championDelta">C++</span>
+        </div>
+        <div class="champion-caption" id="championCaption">CHAMPION · NEXT GENERATION</div>
+        <div class="champion-bar"><i id="championBar"></i></div>
+      </div>
+    </div>
+
+    <div class="fitness-panel">
+      <div class="chart-head">
+        <div class="chart-title">
+          <span class="eyebrow">FITNESS HISTORY</span>
+          <span class="chart-summary" id="chartSummary">AWAITING GENERATION 01</span>
+        </div>
+        <div class="chart-legend">
+          <span><i class="legend-best"></i>BEST</span>
+          <span><i class="legend-avg"></i>AVERAGE</span>
+          <span class="chart-par">PAR <b id="chartPar">620</b></span>
+        </div>
+      </div>
+      <div class="chart-body"><canvas id="chartCanvas" aria-label="Fitness chart"></canvas></div>
+    </div>
+  </section>
+</div>
+
+<div class="modal" id="helpModal" hidden>
+  <div class="modal-scrim" data-close-modal></div>
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <div class="modal-head">
+      <span class="eyebrow">FIELD MANUAL / 001</span>
+      <button type="button" class="icon-btn" data-close-modal aria-label="Close help">×</button>
+    </div>
+    <h2 id="helpTitle">Build a body.<br>Evolve it in C++.</h2>
+    <ol class="manual-steps">
+      <li><span class="step-num">01</span><div><strong>DRAW THE BODY</strong><p>Place joints, connect them with bones, and string muscles between bones.</p></div></li>
+      <li><span class="step-num">02</span><div><strong>PICK A TASK</strong><p>Run, jump, climb, or place a custom target flag.</p></div></li>
+      <li><span class="step-num">03</span><div><strong>EVOLVE IN C++</strong><p>The C++ engine simulates all creatures, ranks them with a Max-Heap, and streams coordinates to this screen.</p></div></li>
+    </ol>
+    <button type="button" class="btn-secondary" data-close-modal>BACK TO THE LAB</button>
+  </div>
+</div>
+
+<div class="modal" id="cppModal" hidden>
+  <div class="modal-scrim" data-close-modal></div>
+  <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="cppTitle" style="max-width: 680px;">
+    <div class="modal-head">
+      <span class="eyebrow">100% C/C++ SIMULATION ENGINE / TCS-551</span>
+      <button type="button" class="icon-btn" data-close-modal aria-label="Close C++ core info">×</button>
+    </div>
+    <h2 id="cppTitle">Pure C/C++ Core<br>+ Thin Canvas Display</h2>
+    <p style="color:var(--muted);font-size:13px;margin:-4px 0 16px 0;">
+      Zero physics or AI runs in JavaScript. All Verlet physics, Graph BFS checks, Max-Heap elitism, and Genetic Algorithm evolution run natively in C++ (<code>sim/cpp/</code>) and stream frames to the browser over <code>localhost:8080</code>.
+    </p>
+    <div class="manual-grid" style="grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+      <section style="background:var(--bg-card);border:1px solid var(--border);border-radius:4px;padding:12px;">
+        <span class="eyebrow" style="color:var(--teal);">DSA 01: SKELETAL GRAPH</span>
+        <h3 style="margin:4px 0 6px 0;font-size:14px;color:var(--paper);">Adjacency List + BFS</h3>
+        <p style="font-size:12px;color:var(--muted);line-height:1.45;margin:0;">
+          Joints are vertices, rigid bones are edges. Runs O(V+E) BFS to verify skeleton connectivity and builds anti-collapse braces.
+        </p>
+      </section>
+      <section style="background:var(--bg-card);border:1px solid var(--border);border-radius:4px;padding:12px;">
+        <span class="eyebrow" style="color:var(--red);">DSA 02: MAX-HEAP</span>
+        <h3 style="margin:4px 0 6px 0;font-size:14px;color:var(--paper);">Binary Priority Queue</h3>
+        <p style="font-size:12px;color:var(--muted);line-height:1.45;margin:0;">
+          O(1) champion lookup and O(E log N) extraction of the top 3 elites each generation without sorting the entire population.
+        </p>
+      </section>
+    </div>
+    <section style="background:var(--bg-card);border:1px solid var(--border);border-radius:4px;padding:12px;margin-bottom:16px;">
+      <span class="eyebrow">C/C++ FILES</span>
+      <dl class="manual-list" style="margin-top:8px;">
+        <div><dt>core/anatomy.hpp &amp; dsa.hpp</dt><dd>Creature Anatomy structs + MaxHeap&lt;T&gt; &amp; SkeletalGraph (BFS)</dd></div>
+        <div><dt>core/fitness.cpp &amp; evolution.cpp</dt><dd>Posture-Weighted Fitness + Genetic Algorithm (crossover, mutation, elitism)</dd></div>
+        <div><dt>external/verlet_physics.cpp</dt><dd>120 Hz Verlet physics, PD balance reflex, bone/muscle/terrain solvers</dd></div>
+        <div><dt>external/http_server.hpp &amp; main.cpp</dt><dd>Localhost HTTP server bridge + <code>--cli</code> terminal mode</dd></div>
+      </dl>
+    </section>
+    <div style="display:flex;justify-content:flex-end;">
+      <button type="button" class="btn-secondary" data-close-modal>CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="ui.js">
+</script>
+</body>
+</html>
